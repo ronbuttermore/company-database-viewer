@@ -15,21 +15,71 @@ require('dotenv').config();
 function viewDepartments() {
     db.query('SELECT * FROM department', function (err, results) {
         console.table(results);
+        viewMenu();
     });
 };
 
 function viewRoles() {
-    db.query('SELECT * FROM role', function (err, results) {
+    db.query('SELECT role.id, role.title, role.salary, department.department_name FROM role INNER JOIN department ON role.department_id=department.id', function (err, results) {
         console.table(results);
+        viewMenu();
     });
 };
 
 function viewEmployees() {
-    db.query('SELECT * FROM employee', function (err, results) {
+    db.query('SELECT employee.id, employee.first_name, employee.last_name, role.title, department.department_name, role.salary, employee.manager_id FROM employee LEFT JOIN role ON employee.role_id=role.id INNER JOIN department ON role.department_id=department.id', function (err, results) {
         console.table(results);
     });
+    viewMenu();
 };
 
+function addDepartment() {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'newDepartment',
+                message: 'What is the name of the new department?',
+            }
+        ])
+        .then((data) => {
+            console.log(data.newDepartment);
+        })
+};
+
+function addRole() {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'newRole',
+                message: 'What is the name of the new role?',
+            }
+        ])
+        .then((data) => {
+            console.log(data.newRole);
+        })
+};
+
+function addEmployee() {
+    inquirer
+        .prompt([
+            {
+                type: 'input',
+                name: 'newEmployee',
+                message: 'What is the name of the new employee?',
+            }
+        ])
+        .then((data) => {
+            console.log(data.newEmployee);
+        })
+};
+
+function updateRole() {
+
+};
+
+function viewMenu () {
 inquirer
     .prompt([
         {
@@ -47,12 +97,15 @@ inquirer
         } else if (data.mainmenu == "View all employees") {
             viewEmployees();
         } else if (data.mainmenu == "Add a department") {
-            console.log("You have chosen to add a department");
+            addDepartment();
         } else if (data.mainmenu == "Add a role") {
-            console.log("You have chosen to add a role");
+            addRole();
         } else if (data.mainmenu == "Add an employee") {
-            console.log("You have chosen to add an employee");
+            addEmployee();
         } else if (data.mainmenu == "Update an employee role") {
-            console.log("You have chosen to update an employee role");
+            updateRole();
         }
-    });
+    })
+};
+
+viewMenu();
