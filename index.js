@@ -43,22 +43,48 @@ function addDepartment() {
             }
         ])
         .then((data) => {
-            console.log(data.newDepartment);
+            var newDepartment = data.newDepartment;
+            db.query(`INSERT INTO department (department_name) VALUES ("${newDepartment}")`);
+            viewMenu();
         })
 };
 
 function addRole() {
-    inquirer
+    db.query('SELECT * FROM department', function (err, results) {
+        var departmentName = [];
+        var departmentID;
+        for (i=0; i<results.length; i++) {
+            departmentName.push(results[i].department_name);
+        }
+        inquirer
         .prompt([
             {
                 type: 'input',
                 name: 'newRole',
                 message: 'What is the name of the new role?',
+            },
+            {
+                type: 'input',
+                name: 'newSalary',
+                message: 'What is the salary of the new role?',
+            },
+            {
+                type:'list',
+                name: 'newDepartmentID',
+                message: 'What is the new department?',
+                choices: departmentName,
             }
         ])
         .then((data) => {
-            console.log(data.newRole);
+            for (i=0; i<departmentName.length; i++) {
+                if (departmentName[i] == data.newDepartmentID) {
+                    departmentID = i+1;
+                }
+            }
+            db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${data.newRole}", "${data.newSalary}", ${departmentID})`);
+            viewMenu();
         })
+    })    
 };
 
 function addEmployee() {
