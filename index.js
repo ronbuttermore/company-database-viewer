@@ -29,8 +29,8 @@ function viewRoles() {
 function viewEmployees() {
     db.query('SELECT employee.id, employee.first_name, employee.last_name, role.title, department.department_name, role.salary, employee.manager_id FROM employee LEFT JOIN role ON employee.role_id=role.id INNER JOIN department ON role.department_id=department.id', function (err, results) {
         console.table(results);
+        viewMenu();
     });
-    viewMenu();
 };
 
 function addDepartment() {
@@ -88,17 +88,59 @@ function addRole() {
 };
 
 function addEmployee() {
-    inquirer
-        .prompt([
-            {
-                type: 'input',
-                name: 'newEmployee',
-                message: 'What is the name of the new employee?',
-            }
-        ])
-        .then((data) => {
-            console.log(data.newEmployee);
-        })
+    db.query('SELECT * FROM role', function (err, results) {
+        var roleName = [];
+        for (i=0; i<results.length; i++) {
+            roleName.push(results[i].title);
+        }
+        db.query('SELECT * FROM employee', function (err, results) {
+            var employeeName = [];
+            for (i=0; i<results.length; i++) {
+                employeeName.push(results[i].first_name + " " + results[i].last_name);
+            } 
+            inquirer
+            .prompt([
+                {
+                    type: 'input',
+                    name: 'first_name',
+                    message: 'What is the first name of the new employee?',
+                },
+                {
+                    type: 'input',
+                    name: 'last_name',
+                    message: 'What is the last name of the new employee?',
+                },
+                {
+                    type: 'list',
+                    name: 'role',
+                    message: `What is the employee's role?`,
+                    choices: roleName,
+                },
+                {
+                    type: 'list',
+                    name: 'manager',
+                    message: `Who is the employee's manager?`,
+                    choices: employeeName,
+                }
+            ])
+            .then((data) => {
+                var roleID;
+                var employeeID;
+                for (i=0; i<roleName.length; i++) {
+                    if (roleName[i] == data.role) {
+                        roleID = i+1;
+                    }
+                }
+                for (i=0; i<employeeName.length; i++) {
+                    if (employeeName[i] == data.manager) {
+                        employeeID = i+1;
+                    }
+                }
+                db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${data.first_name}", "${data.last_name}", ${roleID}, ${employeeID})`);
+                viewMenu();
+                })
+        })                      
+    })
 };
 
 function updateRole() {
