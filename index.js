@@ -144,7 +144,54 @@ function addEmployee() {
 };
 
 function updateRole() {
-
+    db.query('SELECT * FROM employee', function (err, results) {
+        var employeeList = [];
+        for (i=0; i<results.length; i++) {
+            employeeList.push(`${results[i].first_name} ${results[i].last_name}`)
+        }
+        inquirer
+            .prompt([
+                {
+                    type:'list',
+                    name: 'employees',
+                    message: 'Which employee would you like to update?',
+                    choices: employeeList,
+                }
+            ])
+            .then((data) => {
+                var employeeid;
+                for (i=0; i<employeeList.length; i++) {
+                    if (employeeList[i] == data.employees){
+                    employeeid = i+1;
+                    }
+                }
+                db.query('SELECT * FROM role', function (err, results) {
+                    var employeerole = [];
+                    for (i=0; i<results.length; i++){
+                        employeerole.push(results[i].title);
+                    }
+                    inquirer
+                        .prompt([
+                            {
+                                type: 'list',
+                                name: 'role',
+                                message: 'What role would you like to assign to the selected employee?',
+                                choices: employeerole,
+                            }
+                        ])
+                        .then((data) => {
+                            var roleid;
+                            for (i=0; i<employeerole.length; i++){
+                                if (employeerole[i] == data.role) {
+                                    roleid = i+1;
+                                }
+                            }
+                            db.query(`UPDATE employee SET role_id = ${roleid} WHERE id = ${employeeid}`);
+                            viewMenu();
+                        })
+                })
+            })
+    })
 };
 
 function viewMenu () {
