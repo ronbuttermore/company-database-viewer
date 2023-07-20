@@ -27,7 +27,7 @@ function viewRoles() {
 };
 
 function viewEmployees() {
-    db.query('SELECT employee.id, employee.first_name, employee.last_name, role.title, department.department_name, role.salary, employee.manager_id FROM employee LEFT JOIN role ON employee.role_id=role.id INNER JOIN department ON role.department_id=department.id', function (err, results) {
+    db.query(`SELECT Employees.id, Employees.first_name, Employees.last_name, role.title, department.department_name, role.salary, CONCAT(manager.first_name,' ',manager.last_name) as managerName FROM employee Employees LEFT JOIN role ON Employees.role_id=role.id INNER JOIN department ON role.department_id=department.id LEFT JOIN employee manager ON Employees.manager_id=manager.id`, function (err, results) {
         console.table(results);
         viewMenu();
     });
@@ -45,7 +45,8 @@ function addDepartment() {
         .then((data) => {
             var newDepartment = data.newDepartment;
             db.query(`INSERT INTO department (department_name) VALUES ("${newDepartment}")`);
-            viewMenu();
+            console.log(`Successfully added ${data.newDepartment} as new department!`);
+            viewDepartments();
         })
 };
 
@@ -82,7 +83,8 @@ function addRole() {
                 }
             }
             db.query(`INSERT INTO role (title, salary, department_id) VALUES ("${data.newRole}", "${data.newSalary}", ${departmentID})`);
-            viewMenu();
+            console.log(`Successfully added ${data.newRole} with a salary of ${data.newSalary} belonging to the ${data.newDepartmentID} department!`);
+            viewRoles();
         })
     })    
 };
@@ -137,7 +139,8 @@ function addEmployee() {
                     }
                 }
                 db.query(`INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${data.first_name}", "${data.last_name}", ${roleID}, ${employeeID})`);
-                viewMenu();
+                console.log(`Successfully added ${data.first_name} ${data.last_name} as a ${data.role} and who is managed by ${data.manager}!`);
+                viewEmployees();
                 })
         })                      
     })
@@ -187,7 +190,8 @@ function updateRole() {
                                 }
                             }
                             db.query(`UPDATE employee SET role_id = ${roleid} WHERE id = ${employeeid}`);
-                            viewMenu();
+                            console.log(`Successfully updated the role of the selected employee to a ${data.role}!`);
+                            viewEmployees();
                         })
                 })
             })
