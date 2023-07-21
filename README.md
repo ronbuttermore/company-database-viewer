@@ -8,7 +8,7 @@ In order to use this application, start the application from the command line us
 
 From the main menu, the user can choose to view all departments, view all roles, view all employees, add a department, add a role, add an employee, or update an employee's role.
 
-!(video walkthrough)[https://youtu.be/m1bzk_Bjehs]
+Link to walkthrough: https://youtu.be/m1bzk_Bjehs
 
 ## License
 MIT Open-Source License
