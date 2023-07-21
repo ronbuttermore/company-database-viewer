@@ -6,6 +6,10 @@ This command-line node application was developed in order to give companies a wa
 ## Usage
 In order to use this application, start the application from the command line using the 'node index' command.  The video walkthrough linked below will give the user a more detailed walkhrough of how to use the application from a user standpoint.
 
+From the main menu, the user can choose to view all departments, view all roles, view all employees, add a department, add a role, add an employee, or update an employee's role.
+
+!(video walkthrough)[https://youtu.be/m1bzk_Bjehs]
+
 ## License
 MIT Open-Source License
 
